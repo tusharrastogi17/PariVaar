@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const apiUrl = (path) => `${API_BASE_URL}${path}`;
+
 export default function App() {
   const [sourceId, setSourceId] = useState("");
   const [targetId, setTargetId] = useState("");
@@ -11,7 +14,7 @@ export default function App() {
   async function checkServer() {
     setError("");
     try {
-      const response = await fetch("/hello");
+      const response = await fetch(apiUrl("/hello"));
       if (!response.ok) {
         throw new Error("Failed to fetch /hello");
       }
@@ -38,7 +41,7 @@ export default function App() {
         targetId: targetId.trim()
       });
 
-      const response = await fetch(`/relationships/resolve?${params.toString()}`);
+      const response = await fetch(apiUrl(`/relationships/resolve?${params.toString()}`));
       if (!response.ok) {
         const text = await response.text();
         throw new Error(text || "Could not resolve relationship");
