@@ -23,7 +23,7 @@ public class PersonController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "helloqws";
+        return "hello12";
     }
 }
 
