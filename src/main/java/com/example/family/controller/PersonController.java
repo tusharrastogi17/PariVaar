@@ -18,7 +18,8 @@ public class PersonController {
     private final PersonRepository personRepository;
     private final RelationshipResolverService relationshipResolverService;
 
-    public PersonController(PersonRepository personRepository, RelationshipResolverService relationshipResolverService) {
+    public PersonController(PersonRepository personRepository,
+            RelationshipResolverService relationshipResolverService) {
         this.personRepository = personRepository;
         this.relationshipResolverService = relationshipResolverService;
     }
@@ -30,7 +31,7 @@ public class PersonController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "hello12";
+        return "hello260510";
     }
 
     @GetMapping("/tree/{personId}")

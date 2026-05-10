@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FamilyTree from "./FamilyTree";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 console.log("API BASE URL:", import.meta.env.VITE_API_BASE_URL);
@@ -8,13 +9,13 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [sourceId, setSourceId] = useState("10");
-  const [targetId, setTargetId] = useState("1");
+  const [sourceId, setSourceId] = useState("");
+  const [targetId, setTargetId] = useState("");
   const [resolveMessage, setResolveMessage] = useState("");
   const [resolveLoading, setResolveLoading] = useState(false);
   const [resolveError, setResolveError] = useState("");
 
-  const [treePersonId, setTreePersonId] = useState("1");
+  const [treePersonId, setTreePersonId] = useState("");
   const [treeMessage, setTreeMessage] = useState("");
   const [treeLoading, setTreeLoading] = useState(false);
   const [treeError, setTreeError] = useState("");
@@ -103,6 +104,13 @@ export default function App() {
       <hr style={{ margin: '2rem 0' }} />
 
       <div>
+        <h2>Visual Family Tree</h2>
+        <FamilyTree />
+      </div>
+
+      <hr style={{ margin: '2rem 0' }} />
+
+      <div>
         <h2>Resolve Relationship API</h2>
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <div>
@@ -127,14 +135,14 @@ export default function App() {
             {resolveLoading ? "Resolving..." : "Resolve"}
           </button>
         </div>
-        
+
         <div style={{ marginTop: '1rem' }}>
           <strong>Response:</strong>
-          <pre style={{ 
-            background: '#f5f5f5', 
-            padding: '1rem', 
-            borderRadius: '4px', 
-            whiteSpace: 'pre-wrap', 
+          <pre style={{
+            background: '#f5f5f5',
+            padding: '1rem',
+            borderRadius: '4px',
+            whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
             color: resolveError ? 'red' : 'inherit'
           }}>
@@ -161,14 +169,14 @@ export default function App() {
             {treeLoading ? "Loading..." : "Get Family Tree"}
           </button>
         </div>
-        
+
         <div style={{ marginTop: '1rem' }}>
           <strong>Response:</strong>
-          <pre style={{ 
-            background: '#f5f5f5', 
-            padding: '1rem', 
-            borderRadius: '4px', 
-            whiteSpace: 'pre-wrap', 
+          <pre style={{
+            background: '#f5f5f5',
+            padding: '1rem',
+            borderRadius: '4px',
+            whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
             color: treeError ? 'red' : 'inherit'
           }}>

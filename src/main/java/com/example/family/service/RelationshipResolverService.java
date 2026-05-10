@@ -30,7 +30,8 @@ public class RelationshipResolverService {
     private final RelationshipRepository relationshipRepository;
     private final PersonRepository personRepository;
 
-    public RelationshipResolverService(RelationshipRepository relationshipRepository, PersonRepository personRepository) {
+    public RelationshipResolverService(RelationshipRepository relationshipRepository,
+            PersonRepository personRepository) {
         this.relationshipRepository = relationshipRepository;
         this.personRepository = personRepository;
     }
@@ -56,7 +57,8 @@ public class RelationshipResolverService {
         while (!queue.isEmpty()) {
             Long cur = queue.removeFirst();
             for (Edge e : graph.getOrDefault(cur, List.of())) {
-                if (visited.contains(e.to())) continue;
+                if (visited.contains(e.to()))
+                    continue;
 
                 visited.add(e.to());
                 prev.put(e.to(), new Prev(cur, e.relation()));
@@ -100,11 +102,11 @@ public class RelationshipResolverService {
         }
 
         List<Person> persons = personRepository.findAllById(visited);
-        
+
         List<Relationship> relationships = new ArrayList<>();
         for (Relationship r : allRelationships) {
             if (r.getSourcePersonId() != null && r.getTargetPersonId() != null &&
-                visited.contains(r.getSourcePersonId()) && visited.contains(r.getTargetPersonId())) {
+                    visited.contains(r.getSourcePersonId()) && visited.contains(r.getTargetPersonId())) {
                 relationships.add(r);
             }
         }
@@ -134,7 +136,8 @@ public class RelationshipResolverService {
     }
 
     private String deriveRelationshipName(Long sourceId, List<RelationType> path) {
-        if (path.isEmpty()) return "Self";
+        if (path.isEmpty())
+            return "Self";
 
         if (path.size() == 1) {
             return switch (path.get(0)) {
@@ -143,6 +146,7 @@ public class RelationshipResolverService {
                 case Husband -> "Husband";
                 case Wife -> "Wife";
                 case Child -> "Child";
+                default -> path.get(0).name();
             };
         }
 
@@ -162,7 +166,7 @@ public class RelationshipResolverService {
             };
         }
 
-        if (path.size() == 2 && isParent(path.get(0)) && path.get(1) == RelationType.Child) {
+        if (path.size() == 2 && path.get(0) == RelationType.Child && isParent(path.get(1))) {
             return "Sibling";
         }
 
@@ -182,7 +186,8 @@ public class RelationshipResolverService {
         Map<Long, List<Edge>> g = new HashMap<>();
 
         for (Relationship r : all) {
-            if (r.getSourcePersonId() == null || r.getTargetPersonId() == null || r.getRelation() == null) continue;
+            if (r.getSourcePersonId() == null || r.getTargetPersonId() == null || r.getRelation() == null)
+                continue;
 
             Long from = r.getSourcePersonId();
             Long to = r.getTargetPersonId();
@@ -199,8 +204,9 @@ public class RelationshipResolverService {
                 g.computeIfAbsent(to, k -> new ArrayList<>()).add(new Edge(from, RelationType.Husband));
             }
         }
-
+        System.out.println("Graph g: " + g);
         return g;
+
     }
 
     private record Edge(Long to, RelationType relation) {
@@ -209,4 +215,3 @@ public class RelationshipResolverService {
     private record Prev(Long from, RelationType via) {
     }
 }
-

@@ -20,4 +20,3 @@ public class RelationshipController {
         return relationshipRepository.save(relationship);
     }
 }
-
