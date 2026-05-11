@@ -3,31 +3,32 @@ import { Tree, TreeNode } from 'react-organizational-chart';
 import styled from '@emotion/styled';
 
 const StyledNode = styled.div`
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
   display: inline-block;
-  border: 2px solid;
-  font-family: sans-serif;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  background: white;
+  border: 1px solid;
+  font-family: "Inter", "Segoe UI", "Arial", sans-serif;
+  box-shadow: 0 8px 22px rgba(2, 8, 23, 0.4);
+  background: #0f172a;
 `;
 
 const Name = styled.div`
-  font-weight: bold;
-  font-size: 1.1em;
-  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-bottom: 3px;
+  color: #e2e8f0;
 `;
 
 const Details = styled.div`
-  font-size: 0.85em;
-  color: #666;
+  font-size: 0.78rem;
+  color: #94a3b8;
 `;
 
 const NodeBox = ({ name, id, gender, spouseName, spouseId, spouseGender }) => {
-  const getBorderColor = (g) => g === 'M' ? '#4dabf7' : '#f06595'; // Blue for M, Pink for F
+  const getBorderColor = (g) => (g === "M" ? "#60a5fa" : "#f472b6");
   
   return (
-    <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center" }}>
       <StyledNode style={{ borderColor: getBorderColor(gender) }}>
         <Name>{name}</Name>
         <Details>ID: {id} • {gender}</Details>
@@ -35,7 +36,7 @@ const NodeBox = ({ name, id, gender, spouseName, spouseId, spouseGender }) => {
       
       {spouseName && (
         <>
-          <div style={{ height: '2px', width: '12px', background: '#ccc' }}></div>
+          <div style={{ height: "1px", width: "10px", background: "#475569" }}></div>
           <StyledNode style={{ borderColor: getBorderColor(spouseGender) }}>
             <Name>{spouseName}</Name>
             <Details>ID: {spouseId} • {spouseGender}</Details>
@@ -48,11 +49,11 @@ const NodeBox = ({ name, id, gender, spouseName, spouseId, spouseGender }) => {
 
 export default function FamilyTree() {
   return (
-    <div style={{ padding: '2rem', background: '#f8f9fa', borderRadius: '8px', margin: '1rem 0', overflowX: 'auto' }}>
+    <div style={{ padding: "1.5rem", background: "#0f172a", border: "1px solid #2c3d5a", borderRadius: "14px", margin: "0.5rem 0 0", overflowX: "auto" }}>
       <Tree
-        lineWidth={'2px'}
-        lineColor={'#ccc'}
-        lineBorderRadius={'10px'}
+        lineWidth={"1.5px"}
+        lineColor={"#475569"}
+        lineBorderRadius={"8px"}
         label={<NodeBox name="Nick" id="1" gender="M" spouseName="Amelia" spouseId="2" spouseGender="F" />}
       >
         <TreeNode label={<NodeBox name="Carrie" id="3" gender="F" spouseName="Williom" spouseId="6" spouseGender="M" />}>

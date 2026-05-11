@@ -92,97 +92,89 @@ export default function App() {
 
 
   return (
-    <main className="app" style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <div>
-        <h2>Hello API</h2>
-        <button onClick={callHelloApi} disabled={loading}>
-          {loading ? "Loading..." : "Hello"}
-        </button>
-        <p>{error || message}</p>
-      </div>
+    <main className="app">
+      <div className="page-shell">
+        <header className="page-header">
+          <h1>PariVaar</h1>
+          <p>Family relationship tools in one clean dashboard.</p>
+        </header>
 
-      <hr style={{ margin: '2rem 0' }} />
-
-      <div>
+      <section className="panel">
         <h2>Visual Family Tree</h2>
         <FamilyTree />
-      </div>
+      </section>
 
-      <hr style={{ margin: '2rem 0' }} />
-
-      <div>
+      <section className="panel">
         <h2>Resolve Relationship API</h2>
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <label style={{ marginRight: '0.5rem' }}>Source ID:</label>
+        <div className="form-row">
+          <div className="field-group">
+            <label>Source ID:</label>
             <input
+              className="text-input"
               type="number"
               value={sourceId}
               onChange={(e) => setSourceId(e.target.value)}
               placeholder="Source ID"
             />
           </div>
-          <div>
-            <label style={{ marginRight: '0.5rem' }}>Target ID:</label>
+          <div className="field-group">
+            <label>Target ID:</label>
             <input
+              className="text-input"
               type="number"
               value={targetId}
               onChange={(e) => setTargetId(e.target.value)}
               placeholder="Target ID"
             />
           </div>
-          <button onClick={callResolveApi} disabled={resolveLoading}>
+          <button className="primary-btn" onClick={callResolveApi} disabled={resolveLoading}>
             {resolveLoading ? "Resolving..." : "Resolve"}
           </button>
         </div>
 
-        <div style={{ marginTop: '1rem' }}>
+        <div className="response-wrap">
           <strong>Response:</strong>
-          <pre style={{
-            background: '#f5f5f5',
-            padding: '1rem',
-            borderRadius: '4px',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-            color: resolveError ? 'red' : 'inherit'
-          }}>
+          <pre className={`response-box ${resolveError ? "error-text" : ""}`}>
             {resolveError || resolveMessage || "No response yet"}
           </pre>
         </div>
-      </div>
+      </section>
 
-      <hr style={{ margin: '2rem 0' }} />
-
-      <div>
+      <section className="panel">
         <h2>Family Tree API</h2>
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <label style={{ marginRight: '0.5rem' }}>Person ID:</label>
+        <div className="form-row">
+          <div className="field-group">
+            <label>Person ID:</label>
             <input
+              className="text-input"
               type="number"
               value={treePersonId}
               onChange={(e) => setTreePersonId(e.target.value)}
               placeholder="Person ID"
             />
           </div>
-          <button onClick={callTreeApi} disabled={treeLoading}>
+          <button className="primary-btn" onClick={callTreeApi} disabled={treeLoading}>
             {treeLoading ? "Loading..." : "Get Family Tree"}
           </button>
         </div>
 
-        <div style={{ marginTop: '1rem' }}>
+        <div className="response-wrap">
           <strong>Response:</strong>
-          <pre style={{
-            background: '#f5f5f5',
-            padding: '1rem',
-            borderRadius: '4px',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-            color: treeError ? 'red' : 'inherit'
-          }}>
+          <pre className={`response-box ${treeError ? "error-text" : ""}`}>
             {treeError || treeMessage || "No response yet"}
           </pre>
         </div>
+      </section>
+
+      <section className="panel hello-compact">
+        <h2>Hello API</h2>
+        <div className="hello-row">
+          <p className={`status-text hello-status ${error ? "error-text" : ""}`}>{error || message || "No response yet"}</p>
+          <button className="primary-btn hello-btn" onClick={callHelloApi} disabled={loading}>
+            {loading ? "Loading..." : "Hello"}
+          </button>
+        </div>
+      </section>
       </div>
     </main>
   );
