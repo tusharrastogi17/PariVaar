@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FamilyTree from "./FamilyTree";
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
-console.log("API BASE URL:", import.meta.env.VITE_API_BASE_URL);
+import Login from "./Login";
+import api from "./api";
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt_token");
+    setIsAuthenticated(false);
+  };
 
   const [sourceId, setSourceId] = useState("");
   const [targetId, setTargetId] = useState("");
@@ -24,13 +36,8 @@ export default function App() {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/hello`);
-      if (!response.ok) {
-        throw new Error("Request failed");
-      }
-
-      const data = await response.text();
-      setMessage(data);
+      const response = await api.get("/hello");
+      setMessage(response.data);
     } catch {
       setMessage("");
       setError("Error calling backend");
@@ -43,18 +50,11 @@ export default function App() {
     setResolveError("");
     setResolveLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/relationships/resolve?sourceId=${sourceId}&targetId=${targetId}`);
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        setResolveMessage(JSON.stringify(data, null, 2));
+      const response = await api.get(`/relationships/resolve?sourceId=${sourceId}&targetId=${targetId}`);
+      if (typeof response.data === "object") {
+        setResolveMessage(JSON.stringify(response.data, null, 2));
       } else {
-        const data = await response.text();
-        setResolveMessage(data);
+        setResolveMessage(response.data);
       }
     } catch (err) {
       setResolveMessage("");
@@ -68,18 +68,11 @@ export default function App() {
     setTreeError("");
     setTreeLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/tree/${treePersonId}`);
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        setTreeMessage(JSON.stringify(data, null, 2));
+      const response = await api.get(`/tree/${treePersonId}`);
+      if (typeof response.data === "object") {
+        setTreeMessage(JSON.stringify(response.data, null, 2));
       } else {
-        const data = await response.text();
-        setTreeMessage(data);
+        setTreeMessage(response.data);
       }
     } catch (err) {
       setTreeMessage("");
@@ -91,13 +84,31 @@ export default function App() {
 
 
 
+  if (!isAuthenticated) {
+    return (
+      <main className="app">
+        <div className="page-shell">
+          <header className="page-header">
+            <h1>PariVaar</h1>
+            <p>Family relationship tools in one clean dashboard.</p>
+          </header>
+          <Login onLoginSuccess={() => setIsAuthenticated(true)} />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="app">
       <div className="page-shell">
-        <header className="page-header">
-          <h1>PariVaar</h1>
-          <p>Family relationship tools in one clean dashboard.</p>
+        <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1>PariVaar</h1>
+            <p>Family relationship tools in one clean dashboard.</p>
+          </div>
+          <button className="primary-btn" onClick={handleLogout} style={{ height: 'fit-content' }}>Logout</button>
         </header>
+
 
       <section className="panel">
         <h2>Visual Family Tree</h2>

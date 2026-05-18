@@ -8,7 +8,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/hello": "http://localhost:8080",
-      "/relationships": "http://localhost:8080"
+      "/relationships": "http://localhost:8080",
+      "/auth": "http://localhost:8080",
+      "/tree": "http://localhost:8080"
     }
   }
 });
