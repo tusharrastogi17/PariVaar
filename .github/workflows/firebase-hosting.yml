@@ -21,7 +21,8 @@ jobs:
       - name: Install and Build
         working-directory: frontend
         env:
-          VITE_API_BASE_URL: https://parivaar-1b1m.onrender.com
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BACKEND_URL }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: |
           npm install
           npm run build
