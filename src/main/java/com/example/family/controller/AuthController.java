@@ -7,6 +7,9 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.example.family.model.UserLogin;
 import com.example.family.repository.UserLoginRepository;
+import com.example.family.service.AsyncAuditService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,14 +26,22 @@ import java.util.Map;
 @CrossOrigin(origins = "*") // Allows your frontend to call this API
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     @Value("${google.client.id}")
     private String googleClientId;
 
     @Autowired
     private UserLoginRepository userLoginRepository;
 
+    @Autowired
+    private AsyncAuditService asyncAuditService;
+
     @PostMapping("/google")
     public ResponseEntity<?> authenticateGoogle(@RequestBody GoogleAuthRequest request) {
+        String mainThread = Thread.currentThread().getName();
+        log.info("[HTTP THREAD] Received Google Auth Request | Thread: {}", mainThread);
+
         try {
             // Verify the token sent from the frontend
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
@@ -50,6 +61,10 @@ public class AuthController {
                 UserLogin loginRecord = new UserLogin(email, firstName, lastName, LocalDateTime.now());
                 userLoginRepository.save(loginRecord);
                 
+                // ASYNC TRIGGER: Hand off audit log creation to a background thread
+                asyncAuditService.logActivityAsync("GOOGLE_AUTH", 
+                        "User " + firstName + " " + lastName + " (" + email + ") logged in.");
+                
                 // TODO: Generate your own backend JWT instead of reusing Google's
 
                 Map<String, Object> response = new HashMap<>();
@@ -59,6 +74,7 @@ public class AuthController {
                 response.put("firstName", firstName);
                 response.put("lastName", lastName);
 
+                log.info("[HTTP THREAD] Completed Auth request and returning response | Thread: {}", mainThread);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Google ID token.");
