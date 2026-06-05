@@ -1,6 +1,5 @@
 package com.example.family.service;
 
-import com.example.family.dto.FamilyTreeResponse;
 import com.example.family.dto.RelationshipResolveResponse;
 import com.example.family.exception.BusinessException;
 import com.example.family.model.Gender;
@@ -73,46 +72,6 @@ public class RelationshipResolverService {
         throw new BusinessException(NOT_FOUND_MESSAGE);
     }
 
-    public FamilyTreeResponse getFamilyTree(Long personId) {
-        if (personId == null) {
-            throw new BusinessException(NOT_FOUND_MESSAGE);
-        }
-
-        if (!personRepository.existsById(personId)) {
-            throw new BusinessException(NOT_FOUND_MESSAGE);
-        }
-
-        List<Relationship> allRelationships = relationshipRepository.findAll();
-        Map<Long, List<Edge>> graph = buildGraph(allRelationships);
-
-        Set<Long> visited = new HashSet<>();
-        Deque<Long> queue = new ArrayDeque<>();
-
-        queue.add(personId);
-        visited.add(personId);
-
-        while (!queue.isEmpty()) {
-            Long cur = queue.removeFirst();
-            for (Edge e : graph.getOrDefault(cur, List.of())) {
-                if (!visited.contains(e.to())) {
-                    visited.add(e.to());
-                    queue.addLast(e.to());
-                }
-            }
-        }
-
-        List<Person> persons = personRepository.findAllById(visited);
-
-        List<Relationship> relationships = new ArrayList<>();
-        for (Relationship r : allRelationships) {
-            if (r.getSourcePersonId() != null && r.getTargetPersonId() != null &&
-                    visited.contains(r.getSourcePersonId()) && visited.contains(r.getTargetPersonId())) {
-                relationships.add(r);
-            }
-        }
-
-        return new FamilyTreeResponse(persons, relationships);
-    }
 
     private RelationshipResolveResponse buildResponse(Long sourceId, Long targetId, Map<Long, Prev> prev) {
         List<RelationType> relPath = new ArrayList<>();

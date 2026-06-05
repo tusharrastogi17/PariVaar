@@ -1,35 +1,47 @@
 package com.example.family.dto;
 
-import com.example.family.model.Person;
-import com.example.family.model.Relationship;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class FamilyTreeResponse {
-    private List<Person> persons;
-    private List<Relationship> relationships;
+
+    private Long id;
+    private String name;
+    private String spouse;
+    private List<FamilyTreeResponse> children = new ArrayList<>();
 
     public FamilyTreeResponse() {
     }
 
-    public FamilyTreeResponse(List<Person> persons, List<Relationship> relationships) {
-        this.persons = persons;
-        this.relationships = relationships;
+    public Long getId() {
+        return id;
     }
 
-    public List<Person> getPersons() {
-        return persons;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setPersons(List<Person> persons) {
-        this.persons = persons;
+    public String getName() {
+        return name;
     }
 
-    public List<Relationship> getRelationships() {
-        return relationships;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setRelationships(List<Relationship> relationships) {
-        this.relationships = relationships;
+    public String getSpouse() {
+        return spouse;
+    }
+
+    public void setSpouse(String spouse) {
+        this.spouse = spouse;
+    }
+
+    public List<FamilyTreeResponse> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<FamilyTreeResponse> children) {
+        this.children = children;
     }
 }

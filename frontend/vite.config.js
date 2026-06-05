@@ -10,7 +10,8 @@ export default defineConfig({
       "/hello": "http://localhost:8080",
       "/relationships": "http://localhost:8080",
       "/auth": "http://localhost:8080",
-      "/tree": "http://localhost:8080"
+      "/tree": "http://localhost:8080",
+      "/person": "http://localhost:8080"
     }
   }
 });

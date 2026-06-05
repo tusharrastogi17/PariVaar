@@ -3,6 +3,7 @@ package com.example.family.controller;
 import com.example.family.dto.FamilyTreeResponse;
 import com.example.family.model.Person;
 import com.example.family.repository.PersonRepository;
+import com.example.family.service.FamilyTreeService;
 import com.example.family.service.RelationshipResolverService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +18,14 @@ public class PersonController {
 
     private final PersonRepository personRepository;
     private final RelationshipResolverService relationshipResolverService;
+    private final FamilyTreeService familyTreeService;
 
     public PersonController(PersonRepository personRepository,
-            RelationshipResolverService relationshipResolverService) {
+            RelationshipResolverService relationshipResolverService,
+            FamilyTreeService familyTreeService) {
         this.personRepository = personRepository;
         this.relationshipResolverService = relationshipResolverService;
+        this.familyTreeService = familyTreeService;
     }
 
     @PostMapping("/person")
@@ -36,6 +40,6 @@ public class PersonController {
 
     @GetMapping("/tree/{personId}")
     public FamilyTreeResponse getFamilyTree(@PathVariable Long personId) {
-        return relationshipResolverService.getFamilyTree(personId);
+        return familyTreeService.getFamilyTree(personId);
     }
 }
