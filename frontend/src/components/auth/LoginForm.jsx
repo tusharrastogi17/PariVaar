@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import api from "../../../services/api";
+import api, { isValidJwtToken } from "../../api/api";
 import { Mail, Lock } from "lucide-react";
 
 export default function LoginForm({ onLoginSuccess }) {
@@ -13,7 +13,10 @@ export default function LoginForm({ onLoginSuccess }) {
         token: credentialResponse.credential
       });
       
-      const jwtToken = response.data.token || response.data; // Adjust depending on backend response
+      const jwtToken = response.data?.token?.trim();
+      if (!isValidJwtToken(jwtToken)) {
+        throw new Error("Server did not return a valid session token");
+      }
       localStorage.setItem("jwt_token", jwtToken);
       
       if (onLoginSuccess) {

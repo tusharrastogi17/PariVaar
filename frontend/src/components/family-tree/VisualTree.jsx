@@ -1,33 +1,51 @@
 import React, { useState, useEffect } from "react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import TreeCard from "./TreeCard";
-import api from "../../../services/api";
+import api from "../../api/api";
 
 export default function VisualTree() {
-  const [activeRootId, setActiveRootId] = useState(1);
   const [treeData, setTreeData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTree = async (id) => {
-    if (!id) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get(`/tree/${id}`);
-      setTreeData(response.data);
-    } catch (err) {
-      console.error("Error fetching family tree:", err);
-      setError(err.response?.data?.message || err.message || "Failed to load family tree");
-      setTreeData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchTree(activeRootId);
-  }, [activeRootId]);
+    let cancelled = false;
+
+    const loadTree = async () => {
+      setLoading(true);
+      setError(null);
+      setTreeData(null);
+
+      try {
+        const personsResponse = await api.get("/persons");
+        const persons = personsResponse.data ?? [];
+
+        if (cancelled) return;
+
+        if (persons.length === 0) {
+          return;
+        }
+
+        const response = await api.get(`/tree/${persons[0].id}`);
+        if (!cancelled) {
+          setTreeData(response.data);
+        }
+      } catch (err) {
+        if (cancelled) return;
+        console.error("Error loading family tree:", err);
+        setError(err.response?.data?.message || err.message || "Failed to load family tree");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadTree();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   /* Recursive renderer */
   const renderNode = (node) => {
@@ -87,7 +105,9 @@ export default function VisualTree() {
             {treeData.children && treeData.children.map((child) => renderNode(child))}
           </Tree>
         ) : (
-          <div style={{ color: "#94a3b8", textAlign: "center", padding: "20px" }}>No family members found.</div>
+          <div style={{ color: "#94a3b8", textAlign: "center", padding: "20px" }}>
+            {error || "No family members found. Add a person to start building your tree."}
+          </div>
         )}
       </div>
     </div>

@@ -5,12 +5,11 @@ import com.example.family.service.AsyncAuditService;
 import com.example.family.service.RelationshipResolverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin
 @RestController
 public class RelationshipResolveController {
 
@@ -32,7 +31,8 @@ public class RelationshipResolveController {
         log.info("[HTTP THREAD] Received Relationship Resolve Request (Source: {}, Target: {}) | Thread: {}", 
                 sourceId, targetId, mainThread);
 
-        RelationshipResolveResponse response = resolverService.resolve(sourceId, targetId);
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RelationshipResolveResponse response = resolverService.resolve(sourceId, targetId, userId);
 
         // ASYNC TRIGGER: Hand off logging to our custom ThreadPoolTaskExecutor
         asyncAuditService.logActivityAsync("RESOLVE_RELATION", 

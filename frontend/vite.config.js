@@ -11,7 +11,9 @@ export default defineConfig({
       "/relationships": "http://localhost:8080",
       "/auth": "http://localhost:8080",
       "/tree": "http://localhost:8080",
-      "/person": "http://localhost:8080"
+      "/person": "http://localhost:8080",
+      "/persons": "http://localhost:8080",
+      "/api/notes": "http://localhost:8080"
     }
   }
 });

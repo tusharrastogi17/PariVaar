@@ -35,7 +35,7 @@ public class RelationshipResolverService {
         this.personRepository = personRepository;
     }
 
-    public RelationshipResolveResponse resolve(Long sourceId, Long targetId) {
+    public RelationshipResolveResponse resolve(Long sourceId, Long targetId, String userId) {
         if (sourceId == null || targetId == null) {
             throw new BusinessException(NOT_FOUND_MESSAGE);
         }
@@ -44,7 +44,8 @@ public class RelationshipResolverService {
             return new RelationshipResolveResponse(sourceId, targetId, "Self", List.of(), 0);
         }
 
-        Map<Long, List<Edge>> graph = buildGraph(relationshipRepository.findAll());
+        // Build graph scoped to this user's relationships only
+        Map<Long, List<Edge>> graph = buildGraph(relationshipRepository.findByUserId(userId));
 
         Deque<Long> queue = new ArrayDeque<>();
         Map<Long, Prev> prev = new HashMap<>();
@@ -85,25 +86,29 @@ public class RelationshipResolverService {
         Collections.reverse(relPath);
 
         List<String> pathStrings = relPath.stream()
-                .map(r -> r.name().toUpperCase()) // Father -> FATHER
+                .map(r -> r.name().toUpperCase())
                 .toList();
 
         int distance = relPath.size();
-        String relationshipName = deriveRelationshipName(sourceId, relPath);
+        String relationshipName = deriveRelationshipName(sourceId, targetId, relPath);
 
         return new RelationshipResolveResponse(sourceId, targetId, relationshipName, pathStrings, distance);
     }
 
-    private String deriveRelationshipName(Long sourceId, List<RelationType> path) {
+    private String deriveRelationshipName(Long sourceId, Long targetId, List<RelationType> path) {
         if (path.isEmpty())
             return "Self";
 
         if (path.size() == 1) {
             return switch (path.get(0)) {
-                case Father -> "Father";
-                case Mother -> "Mother";
-                case Husband -> "Husband";
-                case Wife -> "Wife";
+                case Parent -> {
+                    Gender g = getGender(targetId);
+                    yield g == Gender.M ? "Father" : g == Gender.F ? "Mother" : "Parent";
+                }
+                case Spouse -> {
+                    Gender g = getGender(targetId);
+                    yield g == Gender.M ? "Husband" : g == Gender.F ? "Wife" : "Spouse";
+                }
                 case Child -> "Child";
                 default -> path.get(0).name();
             };
@@ -133,7 +138,7 @@ public class RelationshipResolverService {
     }
 
     private boolean isParent(RelationType r) {
-        return r == RelationType.Father || r == RelationType.Mother;
+        return r == RelationType.Parent;
     }
 
     private Gender getGender(Long personId) {
@@ -155,12 +160,10 @@ public class RelationshipResolverService {
             g.computeIfAbsent(from, k -> new ArrayList<>()).add(new Edge(to, rel));
 
             // Add helpful inverse edges for better reachability.
-            if (rel == RelationType.Father || rel == RelationType.Mother) {
+            if (rel == RelationType.Parent) {
                 g.computeIfAbsent(to, k -> new ArrayList<>()).add(new Edge(from, RelationType.Child));
-            } else if (rel == RelationType.Husband) {
-                g.computeIfAbsent(to, k -> new ArrayList<>()).add(new Edge(from, RelationType.Wife));
-            } else if (rel == RelationType.Wife) {
-                g.computeIfAbsent(to, k -> new ArrayList<>()).add(new Edge(from, RelationType.Husband));
+            } else if (rel == RelationType.Spouse) {
+                g.computeIfAbsent(to, k -> new ArrayList<>()).add(new Edge(from, RelationType.Spouse));
             }
         }
         System.out.println("Graph g: " + g);

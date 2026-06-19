@@ -2,36 +2,33 @@ package com.example.family.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "persons")
-public class Person {
+@Table(name = "note_document")
+public class NoteDocument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String noteName;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
-    // Stores the Google email of the user who owns this person record
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    public Person() {
+    public NoteDocument() {
     }
 
-    public Person(String name, Gender gender) {
-        this.name = name;
-        this.gender = gender;
+    public NoteDocument(String noteName, String content) {
+        this.noteName = noteName;
+        this.content = content;
     }
 
     public Long getId() {
@@ -42,20 +39,20 @@ public class Person {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNoteName() {
+        return noteName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNoteName(String noteName) {
+        this.noteName = noteName;
     }
 
-    public Gender getGender() {
-        return gender;
+    public String getContent() {
+        return content;
     }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getUserId() {

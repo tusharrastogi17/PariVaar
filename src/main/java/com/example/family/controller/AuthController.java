@@ -1,6 +1,7 @@
 package com.example.family.controller;
 
 import com.example.family.dto.GoogleAuthRequest;
+import com.example.family.security.JwtUtil;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -23,7 +24,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // Allows your frontend to call this API
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
@@ -36,6 +36,9 @@ public class AuthController {
 
     @Autowired
     private AsyncAuditService asyncAuditService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/google")
     public ResponseEntity<?> authenticateGoogle(@RequestBody GoogleAuthRequest request) {
@@ -65,11 +68,12 @@ public class AuthController {
                 asyncAuditService.logActivityAsync("GOOGLE_AUTH", 
                         "User " + firstName + " " + lastName + " (" + email + ") logged in.");
                 
-                // TODO: Generate your own backend JWT instead of reusing Google's
+                // Generate our own backend JWT (signed with our secret)
+                // This replaces the Google token — JwtFilter will validate this token
+                String backendJwt = jwtUtil.generateToken(email);
 
                 Map<String, Object> response = new HashMap<>();
-                // For now, we are just returning the Google token to act as our session token
-                response.put("token", request.getToken()); 
+                response.put("token", backendJwt);  // backend-issued JWT
                 response.put("email", email);
                 response.put("firstName", firstName);
                 response.put("lastName", lastName);

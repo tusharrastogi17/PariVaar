@@ -29,33 +29,38 @@ public class FamilyTreeService {
         this.relationshipRepository = relationshipRepository;
     }
 
-    public FamilyTreeResponse getFamilyTree(Long rootPersonId) {
-        if (rootPersonId == null || !personRepository.existsById(rootPersonId)) {
+    /**
+     * Builds the family tree rooted at rootPersonId, scoped to userId.
+     * Only persons and relationships owned by this user are included.
+     */
+    public FamilyTreeResponse getFamilyTree(Long rootPersonId, String userId) {
+        // Verify the requested root person actually belongs to this user
+        if (rootPersonId == null || !personRepository.existsByIdAndUserId(rootPersonId, userId)) {
             throw new BusinessException("Person not found with id: " + rootPersonId);
         }
 
-        // Build lookup maps
-        List<Person> persons = personRepository.findAll();
+        // Build lookup maps — scoped to this user only
+        List<Person> persons = personRepository.findByUserId(userId);
         Map<Long, Person> personMap = persons.stream()
                 .collect(Collectors.toMap(Person::getId, Function.identity()));
 
-        List<Relationship> relations = relationshipRepository.findAll();
+        List<Relationship> relations = relationshipRepository.findByUserId(userId);
 
-        // Pre-compute spouse map: sourceId -> targetId for Husband/Wife relations
+        // Pre-compute spouse map: sourceId -> targetId for Spouse relations
         Map<Long, Long> spouseMap = new HashMap<>();
         for (Relationship r : relations) {
-            if (r.getRelation() == RelationType.Husband || r.getRelation() == RelationType.Wife) {
+            if (r.getRelation() == RelationType.Spouse) {
                 spouseMap.put(r.getSourcePersonId(), r.getTargetPersonId());
             }
         }
 
-        // Pre-compute children map: parentId -> list of child ids (Father/Mother relations)
+        // Pre-compute children map: parentId -> list of child ids (Parent relations)
         Map<Long, List<Long>> childrenMap = new HashMap<>();
         for (Person p : persons) {
             childrenMap.putIfAbsent(p.getId(), new ArrayList<>());
         }
         for (Relationship r : relations) {
-            if (r.getRelation() == RelationType.Father || r.getRelation() == RelationType.Mother) {
+            if (r.getRelation() == RelationType.Parent) {
                 List<Long> kids = childrenMap.get(r.getSourcePersonId());
                 if (kids != null && !kids.contains(r.getTargetPersonId())) {
                     kids.add(r.getTargetPersonId());

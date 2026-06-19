@@ -1,5 +1,5 @@
 import React from "react";
-import LoginForm from "../features/auth/components/LoginForm";
+import LoginForm from "../components/auth/LoginForm";
 import { Network } from "lucide-react";
 
 export default function LoginPage({ onLoginSuccess }) {
