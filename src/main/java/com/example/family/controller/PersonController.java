@@ -1,5 +1,7 @@
 package com.example.family.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +15,6 @@ import com.example.family.model.Person;
 import com.example.family.repository.PersonRepository;
 import com.example.family.service.FamilyTreeService;
 
-import java.util.List;
-
 @RestController
 public class PersonController {
 
@@ -27,19 +27,29 @@ public class PersonController {
         this.familyTreeService = familyTreeService;
     }
 
+    // -created to add new person in the tree/person table 
+    @PostMapping("/person")
+    public Person createPerson(@RequestBody Person person) {
+        person.setUserId(getAuthenticatedUserId());
+
+        // Generate custom ID (Up to first 5 letters of name + current date timestamp + 4-digit random sequence)
+        String nameStr = person.getName() != null ? person.getName().trim().replaceAll("\\s+", "") : "XXXXX";
+        if (nameStr.isEmpty()) nameStr = "XXXXX";
+        String prefix = nameStr.length() > 5 ? nameStr.substring(0, 5).toUpperCase() : nameStr.toUpperCase();
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+        String uniqueSeq = String.format("%04d", new java.util.Random().nextInt(10000));
+        person.setId(prefix + timestamp + uniqueSeq);
+
+        return personRepository.save(person);
+    }
+
     @GetMapping("/persons")
     public List<Person> listPersons() {
         return personRepository.findByUserId(getAuthenticatedUserId());
     }
-    @PostMapping("/person")
-    public Person createPerson(@RequestBody Person person) {
-        person.setUserId(getAuthenticatedUserId());
-        return personRepository.save(person);
-    }
-
 
     @GetMapping("/tree/{personId}")
-    public FamilyTreeResponse getFamilyTree(@PathVariable Long personId) {
+    public FamilyTreeResponse getFamilyTree(@PathVariable String personId) {
         return familyTreeService.getFamilyTree(personId, getAuthenticatedUserId());
     }
 

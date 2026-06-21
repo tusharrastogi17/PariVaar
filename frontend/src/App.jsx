@@ -6,7 +6,7 @@ import DashboardLayout from "./pages/layouts/DashboardLayout";
 import { isValidJwtToken } from "./api/api";
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => isValidJwtToken(localStorage.getItem("jwt_token")));
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {

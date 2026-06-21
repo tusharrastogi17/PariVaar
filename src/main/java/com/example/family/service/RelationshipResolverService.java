@@ -35,27 +35,28 @@ public class RelationshipResolverService {
         this.personRepository = personRepository;
     }
 
-    public RelationshipResolveResponse resolve(Long sourceId, Long targetId, String userId) {
+    public RelationshipResolveResponse resolve(String sourceId, String targetId, String userId) {
         if (sourceId == null || targetId == null) {
             throw new BusinessException(NOT_FOUND_MESSAGE);
         }
 
         if (sourceId.equals(targetId)) {
+            // Depending on the DTO type, we might need to update it as well
             return new RelationshipResolveResponse(sourceId, targetId, "Self", List.of(), 0);
         }
 
         // Build graph scoped to this user's relationships only
-        Map<Long, List<Edge>> graph = buildGraph(relationshipRepository.findByUserId(userId));
+        Map<String, List<Edge>> graph = buildGraph(relationshipRepository.findByUserId(userId));
 
-        Deque<Long> queue = new ArrayDeque<>();
-        Map<Long, Prev> prev = new HashMap<>();
-        Set<Long> visited = new HashSet<>();
+        Deque<String> queue = new ArrayDeque<>();
+        Map<String, Prev> prev = new HashMap<>();
+        Set<String> visited = new HashSet<>();
 
         queue.add(sourceId);
         visited.add(sourceId);
 
         while (!queue.isEmpty()) {
-            Long cur = queue.removeFirst();
+            String cur = queue.removeFirst();
             for (Edge e : graph.getOrDefault(cur, List.of())) {
                 if (visited.contains(e.to()))
                     continue;
@@ -74,9 +75,9 @@ public class RelationshipResolverService {
     }
 
 
-    private RelationshipResolveResponse buildResponse(Long sourceId, Long targetId, Map<Long, Prev> prev) {
+    private RelationshipResolveResponse buildResponse(String sourceId, String targetId, Map<String, Prev> prev) {
         List<RelationType> relPath = new ArrayList<>();
-        Long cur = targetId;
+        String cur = targetId;
 
         while (prev.containsKey(cur)) {
             Prev p = prev.get(cur);
@@ -95,7 +96,7 @@ public class RelationshipResolverService {
         return new RelationshipResolveResponse(sourceId, targetId, relationshipName, pathStrings, distance);
     }
 
-    private String deriveRelationshipName(Long sourceId, Long targetId, List<RelationType> path) {
+    private String deriveRelationshipName(String sourceId, String targetId, List<RelationType> path) {
         if (path.isEmpty())
             return "Self";
 
@@ -141,20 +142,20 @@ public class RelationshipResolverService {
         return r == RelationType.Parent;
     }
 
-    private Gender getGender(Long personId) {
+    private Gender getGender(String personId) {
         Optional<Gender> g = personRepository.findById(personId).map(p -> p.getGender());
         return g.orElse(null);
     }
 
-    private Map<Long, List<Edge>> buildGraph(List<Relationship> all) {
-        Map<Long, List<Edge>> g = new HashMap<>();
+    private Map<String, List<Edge>> buildGraph(List<Relationship> all) {
+        Map<String, List<Edge>> g = new HashMap<>();
 
         for (Relationship r : all) {
             if (r.getSourcePersonId() == null || r.getTargetPersonId() == null || r.getRelation() == null)
                 continue;
 
-            Long from = r.getSourcePersonId();
-            Long to = r.getTargetPersonId();
+            String from = r.getSourcePersonId();
+            String to = r.getTargetPersonId();
             RelationType rel = r.getRelation();
 
             g.computeIfAbsent(from, k -> new ArrayList<>()).add(new Edge(to, rel));
@@ -171,9 +172,9 @@ public class RelationshipResolverService {
 
     }
 
-    private record Edge(Long to, RelationType relation) {
+    private record Edge(String to, RelationType relation) {
     }
 
-    private record Prev(Long from, RelationType via) {
+    private record Prev(String from, RelationType via) {
     }
 }

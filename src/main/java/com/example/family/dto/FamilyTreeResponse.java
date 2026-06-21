@@ -5,19 +5,22 @@ import java.util.List;
 
 public class FamilyTreeResponse {
 
-    private Long id;
+    private String id;
     private String name;
+    private String gender;
     private String spouse;
+    private String spouseId;
+    private String spouseGender;
     private List<FamilyTreeResponse> children = new ArrayList<>();
 
     public FamilyTreeResponse() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,5 +46,29 @@ public class FamilyTreeResponse {
 
     public void setChildren(List<FamilyTreeResponse> children) {
         this.children = children;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getSpouseId() {
+        return spouseId;
+    }
+
+    public void setSpouseId(String spouseId) {
+        this.spouseId = spouseId;
+    }
+
+    public String getSpouseGender() {
+        return spouseGender;
+    }
+
+    public void setSpouseGender(String spouseGender) {
+        this.spouseGender = spouseGender;
     }
 }

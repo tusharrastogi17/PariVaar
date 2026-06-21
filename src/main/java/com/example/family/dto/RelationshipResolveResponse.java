@@ -3,8 +3,8 @@ package com.example.family.dto;
 import java.util.List;
 
 public class RelationshipResolveResponse {
-    private Long sourceId;
-    private Long targetId;
+    private String sourceId;
+    private String targetId;
     private String relationship;
     private List<String> path;
     private int distance;
@@ -12,7 +12,7 @@ public class RelationshipResolveResponse {
     public RelationshipResolveResponse() {
     }
 
-    public RelationshipResolveResponse(Long sourceId, Long targetId, String relationship, List<String> path, int distance) {
+    public RelationshipResolveResponse(String sourceId, String targetId, String relationship, List<String> path, int distance) {
         this.sourceId = sourceId;
         this.targetId = targetId;
         this.relationship = relationship;
@@ -20,19 +20,19 @@ public class RelationshipResolveResponse {
         this.distance = distance;
     }
 
-    public Long getSourceId() {
+    public String getSourceId() {
         return sourceId;
     }
 
-    public void setSourceId(Long sourceId) {
+    public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
     }
 
-    public Long getTargetId() {
+    public String getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(Long targetId) {
+    public void setTargetId(String targetId) {
         this.targetId = targetId;
     }
 

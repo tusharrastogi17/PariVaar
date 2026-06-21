@@ -25,8 +25,8 @@ public class RelationshipResolveController {
 
     @GetMapping("/relationships/resolve")
     public RelationshipResolveResponse resolve(
-            @RequestParam Long sourceId,
-            @RequestParam Long targetId) {
+            @RequestParam String sourceId,
+            @RequestParam String targetId) {
         String mainThread = Thread.currentThread().getName();
         log.info("[HTTP THREAD] Received Relationship Resolve Request (Source: {}, Target: {}) | Thread: {}", 
                 sourceId, targetId, mainThread);

@@ -17,9 +17,9 @@ public class Relationship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long sourcePersonId;
+    private String sourcePersonId;
 
-    private Long targetPersonId;
+    private String targetPersonId;
 
     @Enumerated(EnumType.STRING)
     private RelationType relation;
@@ -31,7 +31,7 @@ public class Relationship {
     public Relationship() {
     }
 
-    public Relationship(Long sourcePersonId, Long targetPersonId, RelationType relation) {
+    public Relationship(String sourcePersonId, String targetPersonId, RelationType relation) {
         this.sourcePersonId = sourcePersonId;
         this.targetPersonId = targetPersonId;
         this.relation = relation;
@@ -45,19 +45,19 @@ public class Relationship {
         this.id = id;
     }
 
-    public Long getSourcePersonId() {
+    public String getSourcePersonId() {
         return sourcePersonId;
     }
 
-    public void setSourcePersonId(Long sourcePersonId) {
+    public void setSourcePersonId(String sourcePersonId) {
         this.sourcePersonId = sourcePersonId;
     }
 
-    public Long getTargetPersonId() {
+    public String getTargetPersonId() {
         return targetPersonId;
     }
 
-    public void setTargetPersonId(Long targetPersonId) {
+    public void setTargetPersonId(String targetPersonId) {
         this.targetPersonId = targetPersonId;
     }
 
