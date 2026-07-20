@@ -16,7 +16,10 @@ export default function DashboardLayout({ children, onLogout }) {
   const [peopleList, setPeopleList] = useState([]);
 
   const handleAddPerson = () => setActiveModal('person');
-  const handleAddRelationship = () => setActiveModal('relationship');
+  const handleAddRelationship = () => {
+    setActiveModal('relationship');
+    fetchPeople();
+  };
   const handleAddNote = () => setActiveModal('addNote');
   const handleViewNotes = () => {
     setActiveModal('viewNotes');
@@ -164,9 +167,35 @@ export default function DashboardLayout({ children, onLogout }) {
               <div className="modal-content">
                 <h3>Add Relationship</h3>
                 <p className="sleek-text">Connect two family members.</p>
-                <div className="flex-row">
-                  <input type="text" className="sleek-input" placeholder="Person 1 ID" value={person1Id} onChange={e => setPerson1Id(e.target.value)} />
-                  <input type="text" className="sleek-input" placeholder="Person 2 ID" value={person2Id} onChange={e => setPerson2Id(e.target.value)} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Person 1 (Source)</label>
+                    <select
+                      className="sleek-input"
+                      style={{ marginBottom: 0 }}
+                      value={person1Id}
+                      onChange={e => setPerson1Id(e.target.value)}
+                    >
+                      <option value="">Select Person 1...</option>
+                      {peopleList.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Person 2 (Target)</label>
+                    <select
+                      className="sleek-input"
+                      style={{ marginBottom: 0 }}
+                      value={person2Id}
+                      onChange={e => setPerson2Id(e.target.value)}
+                    >
+                      <option value="">Select Person 2...</option>
+                      {peopleList.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <select
                   className="sleek-input"
