@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { X } from 'lucide-react';
+import { X, Network } from 'lucide-react';
 import api from '../../api/api';
 
 export default function DashboardLayout({ children, onLogout }) {
@@ -13,6 +13,7 @@ export default function DashboardLayout({ children, onLogout }) {
   const [noteName, setNoteName] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [notesList, setNotesList] = useState([]);
+  const [peopleList, setPeopleList] = useState([]);
 
   const handleAddPerson = () => setActiveModal('person');
   const handleAddRelationship = () => setActiveModal('relationship');
@@ -20,6 +21,19 @@ export default function DashboardLayout({ children, onLogout }) {
   const handleViewNotes = () => {
     setActiveModal('viewNotes');
     fetchNotes();
+  };
+  const handleViewPeople = () => {
+    setActiveModal('viewPeople');
+    fetchPeople();
+  };
+
+  const fetchPeople = async () => {
+    try {
+      const response = await api.get('/persons');
+      setPeopleList(response.data);
+    } catch (error) {
+      console.error("Failed to fetch people", error);
+    }
   };
 
   const submitPerson = async () => {
@@ -88,19 +102,29 @@ export default function DashboardLayout({ children, onLogout }) {
   };
 
   return (
-    <div className="dashboard-layout" style={{ background: '#f8fafc' }}>
-      <Sidebar
-        onLogout={onLogout}
-        onAddPerson={handleAddPerson}
-        onAddRelationship={handleAddRelationship}
-        onAddNote={handleAddNote}
-        onViewNotes={handleViewNotes}
-      />
+    <div className="dashboard-layout" style={{ background: '#f8fafc', display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      <header className="topbar-new" style={{ height: '64px', borderBottom: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', padding: '0 24px', flexShrink: 0, justifyContent: 'space-between' }}>
+        <div className="brand-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.25rem', fontWeight: 700, color: '#5b21b6' }}>
+          <Network size={28} />
+          <span>Parivaar.</span>
+        </div>
+      </header>
 
-      <div className="main-content-wrapper" style={{ flexGrow: 1, height: '100vh', overflowY: 'auto' }}>
-        <main className="main-content">
-          {children}
-        </main>
+      <div style={{ display: 'flex', flexGrow: 1, height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+        <Sidebar
+          onLogout={onLogout}
+          onAddPerson={handleAddPerson}
+          onAddRelationship={handleAddRelationship}
+          onAddNote={handleAddNote}
+          onViewNotes={handleViewNotes}
+          onViewPeople={handleViewPeople}
+        />
+
+        <div className="main-content-wrapper" style={{ flexGrow: 1, height: '100%', overflowY: 'auto' }}>
+          <main className="main-content">
+            {children}
+          </main>
+        </div>
       </div>
 
       {/* Modals from old FamilyTreePage */}
@@ -194,6 +218,37 @@ export default function DashboardLayout({ children, onLogout }) {
                       <div key={note.id} style={{ background: '#f1f5f9', padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
                         <h4 style={{ margin: '0 0 8px 0', color: '#0f172a' }}>{note.noteName}</h4>
                         <p style={{ margin: 0, color: '#475569', fontSize: '14px', whiteSpace: 'pre-wrap' }}>{note.content}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeModal === 'viewPeople' && (
+              <div className="modal-content" style={{ maxWidth: '500px', width: '90vw' }}>
+                <h3>All People</h3>
+                <p className="sleek-text">A list of all individuals in the family tree.</p>
+                <div className="people-list" style={{ marginTop: '16px', maxHeight: '300px', overflowY: 'auto' }}>
+                  {peopleList.length === 0 ? (
+                    <p style={{ color: '#64748b' }}>No people found.</p>
+                  ) : (
+                    peopleList.map(person => (
+                      <div key={person.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f1f5f9', padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
+                        <div>
+                          <h4 style={{ margin: '0 0 4px 0', color: '#0f172a', fontWeight: '600' }}>{person.name}</h4>
+                          <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>ID: {person.id}</p>
+                        </div>
+                        <span style={{ 
+                          background: person.gender === 'M' ? '#bfdbfe' : person.gender === 'F' ? '#fbcfe8' : '#e2e8f0', 
+                          color: person.gender === 'M' ? '#1e40af' : person.gender === 'F' ? '#9d174d' : '#475569',
+                          padding: '4px 8px', 
+                          borderRadius: '12px', 
+                          fontSize: '12px',
+                          fontWeight: '600'
+                        }}>
+                          {person.gender === 'M' ? 'Male' : person.gender === 'F' ? 'Female' : 'Other'}
+                        </span>
                       </div>
                     ))
                   )}

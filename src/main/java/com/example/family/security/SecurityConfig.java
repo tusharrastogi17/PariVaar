@@ -32,6 +32,11 @@ public class SecurityConfig {
     private JwtUtil jwtUtil;
 
     @Bean
+    public org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // Disable CSRF — not needed for stateless JWT APIs

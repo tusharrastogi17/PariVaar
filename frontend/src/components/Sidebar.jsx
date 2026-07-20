@@ -1,8 +1,6 @@
 import React from 'react';
 import { 
-  Network, 
   LayoutDashboard, 
-  Activity, 
   UserPlus, 
   Users, 
   Link as LinkIcon, 
@@ -13,13 +11,15 @@ import {
   List
 } from 'lucide-react';
 
-export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes }) {
+export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes, onViewPeople }) {
+  const firstName = localStorage.getItem("user_first_name") || "Jane";
+  const lastName = localStorage.getItem("user_last_name") || "Doe";
+  const email = localStorage.getItem("user_email") || "admin@parivaar.io";
+  const initials = ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "JD";
+
   return (
     <aside className="sidebar-new">
-      <div className="sidebar-new-header">
-        <Network size={28} />
-        <span>Parivaar.</span>
-      </div>
+
       
       <nav className="sidebar-new-nav">
         <div className="nav-group-title">Overview</div>
@@ -27,17 +27,14 @@ export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAd
           <LayoutDashboard size={18} />
           <span>Dashboard</span>
         </button>
-        <button className="nav-item-new">
-          <Activity size={18} />
-          <span>Activity Logs</span>
-        </button>
+
 
         <div className="nav-group-title">Data Management</div>
         <button className="nav-item-new" onClick={onAddPerson}>
           <UserPlus size={18} />
           <span>Add Person</span>
         </button>
-        <button className="nav-item-new">
+        <button className="nav-item-new" onClick={onViewPeople}>
           <Users size={18} />
           <span>View People</span>
         </button>
@@ -67,10 +64,10 @@ export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAd
 
       <div className="sidebar-new-footer">
         <div className="user-profile">
-          <div className="user-avatar">JD</div>
+          <div className="user-avatar">{initials}</div>
           <div className="user-details">
-            <h4>Jane Doe</h4>
-            <p>admin@parivaar.io</p>
+            <h4>{firstName} {lastName}</h4>
+            <p>{email}</p>
           </div>
           <button className="btn-icon" onClick={onLogout} title="Log Out">
             <LogOut size={18} />

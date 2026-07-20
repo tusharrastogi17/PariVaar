@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import VisualTree from "../components/family-tree/VisualTree";
 import { useFamilyAPI } from "../hooks/useFamilyAPI";
-import { Users, Link as LinkIcon, Network } from "lucide-react";
+import { Network } from "lucide-react";
 
 export default function Dashboard() {
   const [sourceId, setSourceId] = useState("");
@@ -9,38 +9,8 @@ export default function Dashboard() {
   const { resolveState, callResolveApi } = useFamilyAPI();
 
   return (
-    <div style={{ padding: '32px' }}>
-      {/* Welcome Banner */}
-      <div className="overview-banner" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)' }}>
-        <div>
-          <h2>Welcome back, Jane! 👋</h2>
-          <p>Your family graph engine is running smoothly. You have added 12 new members this month.</p>
-        </div>
-      </div>
+    <div style={{ padding: '10px' }}>
 
-      {/* Stat Cards */}
-      <div className="stats-container">
-        <div className="stat-card">
-          <div className="stat-info">
-            <h3>Total People</h3>
-            <p className="stat-value">142</p>
-            <p className="stat-trend positive">↑ 12% vs last month</p>
-          </div>
-          <div className="stat-icon" style={{ backgroundColor: '#eff6ff', color: '#3b82f6' }}>
-            <Users size={20} />
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-info">
-            <h3>Relationships</h3>
-            <p className="stat-value">315</p>
-            <p className="stat-trend positive">↑ 8% vs last month</p>
-          </div>
-          <div className="stat-icon" style={{ backgroundColor: '#eff6ff', color: '#3b82f6' }}>
-            <LinkIcon size={20} />
-          </div>
-        </div>
-      </div>
 
       <div className="dashboard-grid">
         {/* Active Tree Preview */}

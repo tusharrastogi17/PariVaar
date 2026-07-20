@@ -1,12 +1,12 @@
 package com.example.family.repository;
 
-import com.example.family.model.UserLogin;
+import com.example.family.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserLoginRepository extends JpaRepository<UserLogin, Long> {
-    Optional<UserLogin> findFirstByEmail(String email);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
 }

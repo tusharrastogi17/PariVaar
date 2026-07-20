@@ -20,6 +20,9 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwt_token");
+    localStorage.removeItem("user_email");
+    localStorage.removeItem("user_first_name");
+    localStorage.removeItem("user_last_name");
     setIsAuthenticated(false);
     setShowLogin(false);
   };
