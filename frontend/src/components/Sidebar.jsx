@@ -11,7 +11,7 @@ import {
   List
 } from 'lucide-react';
 
-export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes, onViewPeople }) {
+export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes, onViewPeople, onOpenResolver }) {
   const firstName = localStorage.getItem("user_first_name") || "Jane";
   const lastName = localStorage.getItem("user_last_name") || "Doe";
   const email = localStorage.getItem("user_email") || "admin@parivaar.io";
@@ -56,7 +56,7 @@ export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAd
           <GitBranch size={18} />
           <span>Family Tree</span>
         </button>
-        <button className="nav-item-new">
+        <button className="nav-item-new" onClick={onOpenResolver}>
           <Search size={18} />
           <span>Relationship Resolver</span>
         </button>

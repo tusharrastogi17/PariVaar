@@ -14,6 +14,9 @@ export default function DashboardLayout({ children, onLogout }) {
   const [noteContent, setNoteContent] = useState("");
   const [notesList, setNotesList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
+  const [sourceId, setSourceId] = useState("");
+  const [targetId, setTargetId] = useState("");
+  const [resolveState, setResolveState] = useState({ loading: false, error: "", message: "" });
 
   useEffect(() => {
     fetchPeople();
@@ -31,6 +34,13 @@ export default function DashboardLayout({ children, onLogout }) {
   };
   const handleViewPeople = () => {
     setActiveModal('viewPeople');
+    fetchPeople();
+  };
+  const handleOpenResolver = () => {
+    setActiveModal('resolver');
+    setSourceId("");
+    setTargetId("");
+    setResolveState({ loading: false, error: "", message: "" });
     fetchPeople();
   };
 
@@ -108,6 +118,21 @@ export default function DashboardLayout({ children, onLogout }) {
     }
   };
 
+  const callResolveApi = async (src, tgt) => {
+    if (!src || !tgt) {
+      setResolveState({ error: "Please select both Person A and Person B.", loading: false, message: "" });
+      return;
+    }
+    setResolveState({ error: "", loading: true, message: "" });
+    try {
+      const response = await api.get(`/relationships/resolve?sourceId=${src}&targetId=${tgt}`);
+      const formatted = typeof response.data === "object" ? JSON.stringify(response.data, null, 2) : response.data;
+      setResolveState({ error: "", loading: false, message: formatted });
+    } catch (err) {
+      setResolveState({ error: `Error: ${err.message}`, loading: false, message: "" });
+    }
+  };
+
   return (
     <div className="dashboard-layout" style={{ background: '#f8fafc', display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <header className="topbar-new" style={{ height: '64px', borderBottom: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', padding: '0 24px', flexShrink: 0, justifyContent: 'space-between' }}>
@@ -125,6 +150,7 @@ export default function DashboardLayout({ children, onLogout }) {
           onAddNote={handleAddNote}
           onViewNotes={handleViewNotes}
           onViewPeople={handleViewPeople}
+          onOpenResolver={handleOpenResolver}
         />
 
         <div className="main-content-wrapper" style={{ flexGrow: 1, height: '100%', overflowY: 'auto' }}>
@@ -286,6 +312,57 @@ export default function DashboardLayout({ children, onLogout }) {
                     ))
                   )}
                 </div>
+              </div>
+            )}
+
+            {activeModal === 'resolver' && (
+              <div className="modal-content">
+                <h3>Relationship Resolver</h3>
+                <p className="sleek-text">Find the relationship between two family members.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Person A (Source)</label>
+                    <select
+                      className="sleek-input"
+                      style={{ marginBottom: 0 }}
+                      value={sourceId}
+                      onChange={e => setSourceId(e.target.value)}
+                    >
+                      <option value="">Select Person A...</option>
+                      {peopleList.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Person B (Target)</label>
+                    <select
+                      className="sleek-input"
+                      style={{ marginBottom: 0 }}
+                      value={targetId}
+                      onChange={e => setTargetId(e.target.value)}
+                    >
+                      <option value="">Select Person B...</option>
+                      {peopleList.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  className="sleek-btn primary full-width" 
+                  style={{ marginTop: '16px' }} 
+                  onClick={() => callResolveApi(sourceId, targetId)}
+                >
+                  {resolveState.loading ? 'Resolving...' : 'Resolve Relationship'}
+                </button>
+
+                {(resolveState.message || resolveState.error) && (
+                  <div className="response-box" style={{ marginTop: '16px' }}>
+                    {resolveState.error || resolveState.message}
+                  </div>
+                )}
               </div>
             )}
           </div>
