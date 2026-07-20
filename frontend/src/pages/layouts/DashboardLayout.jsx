@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { X, Network } from 'lucide-react';
 import api from '../../api/api';
@@ -14,6 +14,10 @@ export default function DashboardLayout({ children, onLogout }) {
   const [noteContent, setNoteContent] = useState("");
   const [notesList, setNotesList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
+
+  useEffect(() => {
+    fetchPeople();
+  }, []);
 
   const handleAddPerson = () => setActiveModal('person');
   const handleAddRelationship = () => {

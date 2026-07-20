@@ -1,12 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import VisualTree from "../components/family-tree/VisualTree";
 import { useFamilyAPI } from "../hooks/useFamilyAPI";
 import { Network } from "lucide-react";
+import api from "../api/api";
 
 export default function Dashboard() {
   const [sourceId, setSourceId] = useState("");
   const [targetId, setTargetId] = useState("");
+  const [peopleList, setPeopleList] = useState([]);
   const { resolveState, callResolveApi } = useFamilyAPI();
+
+  useEffect(() => {
+    const fetchPeople = async () => {
+      try {
+        const response = await api.get('/persons');
+        setPeopleList(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch people for resolver", error);
+      }
+    };
+    fetchPeople();
+  }, []);
 
   return (
     <div style={{ padding: '10px' }}>
@@ -38,23 +52,29 @@ export default function Dashboard() {
           <div className="resolver-inputs">
             <div className="resolver-input-group">
               <label>Person A</label>
-              <input 
-                type="text" 
+              <select 
                 className="sleek-input" 
-                placeholder="Source ID" 
                 value={sourceId} 
                 onChange={e => setSourceId(e.target.value)} 
-              />
+              >
+                <option value="">Select Person A...</option>
+                {peopleList.map(p => (
+                  <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                ))}
+              </select>
             </div>
             <div className="resolver-input-group">
               <label>Person B</label>
-              <input 
-                type="text" 
+              <select 
                 className="sleek-input" 
-                placeholder="Target ID" 
                 value={targetId} 
                 onChange={e => setTargetId(e.target.value)} 
-              />
+              >
+                <option value="">Select Person B...</option>
+                {peopleList.map(p => (
+                  <option key={p.id} value={p.id}>{p.name} ({p.id})</option>
+                ))}
+              </select>
             </div>
           </div>
           <button 
