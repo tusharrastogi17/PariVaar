@@ -11,14 +11,14 @@ import {
   List
 } from 'lucide-react';
 
-export default function Sidebar({ onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes, onViewPeople, onOpenResolver }) {
+export default function Sidebar({ isOpen, onLogout, onAddPerson, onAddRelationship, onAddNote, onViewNotes, onViewPeople, onOpenResolver }) {
   const firstName = localStorage.getItem("user_first_name") || "Jane";
   const lastName = localStorage.getItem("user_last_name") || "Doe";
   const email = localStorage.getItem("user_email") || "admin@parivaar.io";
   const initials = ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "JD";
 
   return (
-    <aside className="sidebar-new">
+    <aside className={`sidebar-new ${isOpen ? 'open' : ''}`}>
 
       
       <nav className="sidebar-new-nav">

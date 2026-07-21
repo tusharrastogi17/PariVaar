@@ -329,21 +329,21 @@ body {
 /* --- Tree Nodes --- */
 .tree-node-wrapper {
   display: flex;
-  gap: 16px;
+  gap: 4px;
   justify-content: center;
   align-items: center;
 }
 
 .tree-node-card {
   background: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px 16px;
-  min-width: 160px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 6px;
+  min-width: 80px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .tree-node-card.male {
@@ -355,16 +355,16 @@ body {
 }
 
 .node-avatar {
-  width: 54px;
-  height: 54px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 700;
-  font-size: 1.2rem;
-  margin-bottom: 16px;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
 }
 
 .node-avatar.male { background-color: #60a5fa; }
@@ -374,18 +374,18 @@ body {
 .node-name {
   font-weight: 600;
   color: #0f172a;
-  font-size: 0.95rem;
-  margin-bottom: 8px;
+  font-size: 0.7rem;
+  margin-bottom: 2px;
   text-align: center;
-  max-width: 120px;
+  max-width: 72px;
   word-wrap: break-word;
 }
 
 .node-badge {
-  font-size: 0.65rem;
+  font-size: 0.5rem;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 1px 4px;
+  border-radius: 6px;
   background-color: #f8fafc;
   color: #94a3b8;
   letter-spacing: 0.05em;
@@ -396,13 +396,13 @@ body {
   display: flex;
   justify-content: center;
   overflow-x: auto;
-  padding: 40px 0;
+  padding: 10px 0;
   background: transparent;
 }
 
 .spouse-connector {
   height: 1px;
-  width: 24px;
+  width: 6px;
   background: #cbd5e1;
 }
 
@@ -1099,5 +1099,80 @@ body {
 
 .hover-bg-slate:hover {
   background-color: #f1f5f9;
+}
+
+/* --- Responsive Design & Media Queries --- */
+
+/* Hide mobile menu button by default on desktop */
+.mobile-menu-btn {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  /* Topbar / Header adjustments */
+  .mobile-menu-btn {
+    display: inline-flex !important;
+  }
+
+  /* Sidebar drawer logic for mobile */
+  .sidebar-new {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+  }
+  
+  .sidebar-new.open {
+    transform: translateX(0);
+  }
+
+  /* Dashboard grid layout (collapses sidebar and content) */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  /* Resolver inputs stack vertically */
+  .resolver-inputs {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Stats container cards stack */
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  /* Landing page tweaks */
+  .landing-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .landing-header {
+    padding: 16px 20px;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .btn-build-tree, .btn-demo {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Modal scaling */
+  .sleek-modal {
+    width: 92%;
+    padding: 24px 16px;
+  }
 }
 

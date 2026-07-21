@@ -95,7 +95,7 @@ export default function VisualTree() {
             value={selectedRootId} 
             onChange={(e) => setSelectedRootId(e.target.value)} 
             className="sleek-input" 
-            style={{ width: "250px", display: "inline-block", padding: "8px 12px" }}
+            style={{ width: "250px", maxWidth: "100%", display: "inline-block", padding: "8px 12px" }}
           >
             {allPersons.map(p => <option key={p.id} value={p.id}>{p.name} ({p.id})</option>)}
           </select>
@@ -124,7 +124,7 @@ export default function VisualTree() {
                 lineWidth={"1.5px"}
                 lineColor={"#cbd5e1"}
                 lineBorderRadius={"8px"}
-                nodePadding={"16px"}
+                nodePadding={"4px"}
                 label={
                   <TreeCard
                     name={treeData.name}

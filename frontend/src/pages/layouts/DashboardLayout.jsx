@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { X, Network } from 'lucide-react';
+import { X, Network, Menu } from 'lucide-react';
 import api from '../../api/api';
 
 export default function DashboardLayout({ children, onLogout }) {
@@ -17,27 +17,38 @@ export default function DashboardLayout({ children, onLogout }) {
   const [sourceId, setSourceId] = useState("");
   const [targetId, setTargetId] = useState("");
   const [resolveState, setResolveState] = useState({ loading: false, error: "", message: "" });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetchPeople();
   }, []);
 
-  const handleAddPerson = () => setActiveModal('person');
+  const handleAddPerson = () => {
+    setActiveModal('person');
+    setIsSidebarOpen(false);
+  };
   const handleAddRelationship = () => {
     setActiveModal('relationship');
+    setIsSidebarOpen(false);
     fetchPeople();
   };
-  const handleAddNote = () => setActiveModal('addNote');
+  const handleAddNote = () => {
+    setActiveModal('addNote');
+    setIsSidebarOpen(false);
+  };
   const handleViewNotes = () => {
     setActiveModal('viewNotes');
+    setIsSidebarOpen(false);
     fetchNotes();
   };
   const handleViewPeople = () => {
     setActiveModal('viewPeople');
+    setIsSidebarOpen(false);
     fetchPeople();
   };
   const handleOpenResolver = () => {
     setActiveModal('resolver');
+    setIsSidebarOpen(false);
     setSourceId("");
     setTargetId("");
     setResolveState({ loading: false, error: "", message: "" });
@@ -136,14 +147,45 @@ export default function DashboardLayout({ children, onLogout }) {
   return (
     <div className="dashboard-layout" style={{ background: '#f8fafc', display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <header className="topbar-new" style={{ height: '64px', borderBottom: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', padding: '0 24px', flexShrink: 0, justifyContent: 'space-between' }}>
-        <div className="brand-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.25rem', fontWeight: 700, color: '#5b21b6' }}>
-          <Network size={28} />
-          <span>Parivaar.</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button 
+            className="mobile-menu-btn" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+              alignItems: 'center',
+              color: '#475569'
+            }}
+          >
+            <Menu size={24} />
+          </button>
+          <div className="brand-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.25rem', fontWeight: 700, color: '#5b21b6' }}>
+            <Network size={28} />
+            <span>Parivaar.</span>
+          </div>
         </div>
       </header>
 
-      <div style={{ display: 'flex', flexGrow: 1, height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexGrow: 1, height: 'calc(100vh - 64px)', overflow: 'hidden', position: 'relative' }}>
+        {isSidebarOpen && (
+          <div 
+            className="sidebar-backdrop"
+            onClick={() => setIsSidebarOpen(false)}
+            style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(15, 23, 42, 0.3)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 40,
+              cursor: 'pointer'
+            }}
+          />
+        )}
         <Sidebar
+          isOpen={isSidebarOpen}
           onLogout={onLogout}
           onAddPerson={handleAddPerson}
           onAddRelationship={handleAddRelationship}
@@ -235,7 +277,6 @@ export default function DashboardLayout({ children, onLogout }) {
                 >
                   <option value="Parent">Parent</option>
                   <option value="Spouse">Spouse</option>
-                  <option value="Child">Child</option>
                 </select>
                 <button type="button" className="sleek-btn primary full-width" style={{ marginTop: '16px' }} onClick={submitRelationship}>Submit</button>
               </div>
